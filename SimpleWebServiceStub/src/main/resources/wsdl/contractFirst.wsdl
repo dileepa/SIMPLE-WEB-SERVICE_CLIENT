@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--This WSDL is used for -->
+<!--Simple Deme for the Test projet.-->
+<!---->
+<!--it is designed by Dileepa.-->
+
+<!--define target name space in below "definitions" sector.(package structure of the java code)-->
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+                  xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+                  xmlns:s="http://www.w3.org/2001/XMLSchema"
+                  xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+                  xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+                  xmlns:tns="http://dileepa/com/2015/05/"
+                  targetNamespace="http://dileepa/com/2015/05/"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                  xmlns:wsa="http://www.w3.org/2005/08/addressing"
+                  xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+                  xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+
+    <wsp:Policy wsu:Id="ServicePolicy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <wsaw:UsingAddressing/>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+
+    <wsdl:types>
+        <s:schema targetNamespace="http://dileepa/com/2015/05/" elementFormDefault="qualified">
+            <!--Begin of the server and client side attributes (Object types are communicating between client and server) generation -->
+            <s:simpleType name="UserName">
+                <s:annotation>
+                    <s:documentation>Username of the User.</s:documentation>
+                </s:annotation>
+                <s:restriction base="s:string">
+                    <s:maxLength value="20"/>
+                </s:restriction>
+            </s:simpleType>
+
+            <s:complexType name="UserSearchCriteria">
+                <s:sequence>
+                    <!--"s" used for xmlns:s="http://www.w3.org/2001/XMLSchema" under definition-->
+                    <s:element name="status" type="s:string" minOccurs="1" maxOccurs="1"/>
+                    <s:element name="city" type="s:string" minOccurs="0" maxOccurs="1"/>
+                </s:sequence>
+            </s:complexType>
+
+            <s:simpleType name="UserStatus">
+                <s:annotation>
+                    <s:documentation>Defines the user-status-value</s:documentation>
+                </s:annotation>
+                <s:restriction base="s:string">
+                    <s:enumeration value="Accepted"/>
+                    <s:enumeration value="Blocked"/>
+                    <s:enumeration value="Expired"/>
+                    <s:enumeration value="Invalid"/>
+                </s:restriction>
+            </s:simpleType>
+
+
+            <s:complexType name="User">
+                <s:sequence>
+                    <!--"s" used for xmlns:s="http://www.w3.org/2001/XMLSchema" under definition-->
+                    <s:element name="id" type="s:int" minOccurs="1" maxOccurs="1"/>
+                    <s:element name="username" type="s:string" minOccurs="1" maxOccurs="1"/>
+                    <s:element name="status" type="tns:UserStatus" minOccurs="1" maxOccurs="1"/>
+                    <s:element name="city" type="s:string" minOccurs="1" maxOccurs="1"/>
+                </s:sequence>
+            </s:complexType>
+
+            <s:complexType name="GetAllUsersRequest">
+                <s:annotation>
+                    <s:documentation>Defines the get All Request from Service.</s:documentation>
+                </s:annotation>
+                <s:sequence></s:sequence>
+            </s:complexType>
+
+            <s:complexType name="GetAllUsersResponse">
+                <s:annotation>
+                    <s:documentation>Defines the get All Request from Service.</s:documentation>
+                </s:annotation>
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="userList" nillable="true"
+                               type="tns:User"></s:element>
+                </s:sequence>
+            </s:complexType>
+
+            <s:complexType name="SearchUsersRequest">
+                <s:annotation>
+                    <s:documentation>Defines the get All Request from Service.</s:documentation>
+                </s:annotation>
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="UserSearchCriteria" nillable="true"
+                               type="tns:UserSearchCriteria"></s:element>
+                </s:sequence>
+            </s:complexType>
+
+            <s:complexType name="SearchUsersResponse">
+                <s:annotation>
+                    <s:documentation>Defines the get All Request from Service.</s:documentation>
+                </s:annotation>
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="0" name="userList" nillable="true"
+                               type="tns:User"></s:element>
+                </s:sequence>
+            </s:complexType>
+
+
+            <s:element name="getAllUsersRequest" type="tns:GetAllUsersRequest"/>
+            <s:element name="getAllUsersResponse" type="tns:GetAllUsersResponse"/>
+            <s:element name="searchUsersRequest" type="tns:SearchUsersRequest"/>
+            <s:element name="searchUsersResponse" type="tns:SearchUsersResponse"/>
+        </s:schema>
+    </wsdl:types>
+
+    <wsdl:message name="GetAllUsersInput">
+        <wsdl:part name="parameters" element="tns:getAllUsersRequest"/>
+    </wsdl:message>
+    <wsdl:message name="GetAllUsersOutput">
+        <wsdl:part name="parameters" element="tns:getAllUsersResponse"/>
+    </wsdl:message>
+    <wsdl:message name="SearchUsersInput">
+        <wsdl:part name="parameters" element="tns:searchUsersRequest"/>
+    </wsdl:message>
+    <wsdl:message name="SearchUsersOutput">
+        <wsdl:part name="parameters" element="tns:searchUsersResponse"/>
+    </wsdl:message>
+
+
+    <wsdl:portType name="UserManagementService">
+        <wsdl:operation name="GetAllUsers">
+            <wsdl:input message="tns:GetAllUsersInput" wsaw:Action="/GetAllUsers"/>
+            <wsdl:output message="tns:GetAllUsersOutput" wsaw:Action="/GetAllUsersResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="SearchUsers">
+            <wsdl:input message="tns:SearchUsersInput" wsaw:Action="/SearchUsers"/>
+            <wsdl:output message="tns:SearchUsersOutput" wsaw:Action="/SearchUsersResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <wsdl:binding name="UserManagementService11Binding" type="tns:UserManagementService">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"></soap:binding>
+        <wsdl:operation name="GetAllUsers">
+            <soap:operation soapAction="/GetAllUsers" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="SearchUsers">
+            <soap:operation soapAction="/SearchUsers" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <wsdl:service name="UserManagementService">
+        <wsdl:port name="UserManagementService11BindingSoap11Endpoint" binding="tns:UserManagementService11Binding">
+            <soap:address location="http://localhost/dileepa/UserManagementService/"></soap:address>
+        </wsdl:port>
+    </wsdl:service>
+
+
+</wsdl:definitions>
